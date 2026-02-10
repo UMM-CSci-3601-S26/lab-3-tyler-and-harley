@@ -43,7 +43,7 @@ export class UserService {
    * @param filters a map that allows us to specify a target role, age,
    *  or company to filter by, or any combination of those
    * @returns an `Observable` of an array of `Users`. Wrapping the array
-   *  in an `Observable` means that other bits of of code can `subscribe` to
+   *  in an `Observable` means that other bits of code can `subscribe` to
    *  the result (the `Observable`) and get the results that come back
    *  from the server after a possibly substantial delay (because we're
    *  contacting a remote server over the Internet).
