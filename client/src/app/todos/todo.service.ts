@@ -23,7 +23,8 @@ export class TodoService {
       params: httpParams,
     });
   }
-  getUserById(id: string): Observable<Todo> {
+
+  getTodoById(id: string): Observable<Todo> {
     return this.httpClient.get<Todo>(`${this.todoUrl}/${id}`);
   }
 

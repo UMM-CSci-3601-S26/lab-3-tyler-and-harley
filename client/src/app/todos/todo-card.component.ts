@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
 import { Todo } from './todo';
 
 @Component({
-  selector: 'app-user-card',
+  selector: 'app-todo-card',
   templateUrl: './todo-card.component.html',
   styleUrls: ['./todo-card.component.scss'],
   imports: [MatCardModule, MatButtonModule, MatListModule, MatIconModule, RouterLink]

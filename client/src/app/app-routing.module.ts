@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { AddUserComponent } from './users/add-user.component';
 import { UserListComponent } from './users/user-list.component';
+import { TodoListComponent } from './todos/todo-list.component';
 import { UserProfileComponent } from './users/user-profile.component';
 import { CompanyListComponent } from './company-list/company-list.component';
 
