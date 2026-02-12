@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, computed, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,12 +12,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-//import { catchError, combineLatest, of, switchMap, tap } from 'rxjs';
-import { status } from './todo';
+import { catchError, combineLatest, of, switchMap, tap } from 'rxjs';
+import { Todo, status } from './todo';
 import { TodoCardComponent } from './todo-card.component';
-// import { TodoService } from './todo.service';
-// import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { UserService } from '../users/user.service';
+import { TodoService } from './todo.service';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-todo-list-component',
@@ -42,14 +41,48 @@ import { UserService } from '../users/user.service';
 })
 export class TodoListComponent {
 
-  private todoService = inject(UserService)
+  private todoService = inject(TodoService)
   private snackBar = inject(MatSnackBar);
 
   owner = signal<string | undefined>(undefined);
-  category = signal<number | undefined>(undefined);
+  category = signal<string | undefined>(undefined);
   status = signal<status | undefined>(undefined);
   body = signal<string | undefined>(undefined);
 
   viewType = signal<'card' | 'list'>('card');
 
+  errMsg = signal<string | undefined>(undefined);
+  private owner$ = toObservable(this.status);
+  private body$ = toObservable(this.category);
+
+  serverFilteredTodos =
+    toSignal(
+      combineLatest([this.owner$, this.body$]).pipe(
+        switchMap(([owner, body]) =>
+          this.todoService.getTodos({
+            owner,
+            body,
+          })
+        ),
+        catchError((err) => {
+          if (!(err.error instanceof ErrorEvent)) {
+            this.errMsg.set(
+              `Problem contacting the server – Error Code: ${err.status}\nMessage: ${err.message}`
+            );
+          }
+          this.snackBar.open(this.errMsg(), 'OK', { duration: 6000 });
+
+          return of<Todo[]>([]);
+        }),
+        tap(() => {
+        })
+      )
+    );
+  filteredTodos = computed(() => {
+    const serverFilteredUsers = this.serverFilteredTodos();
+    return this.todoService.filterTodos(serverFilteredUsers, {
+      owner: this.owner(),
+      body: this.body(),
+    });
+  });
 }

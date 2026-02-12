@@ -5,7 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
 import { Todo } from './todo';
-
 @Component({
   selector: 'app-todo-card',
   templateUrl: './todo-card.component.html',
@@ -16,4 +15,5 @@ export class TodoCardComponent {
 
   todo = input.required<Todo>();
   simple = input(false);
+  status = this.todo.status();
 }
