@@ -50,6 +50,7 @@ export class TodoListComponent {
   body = signal<string | undefined>(undefined);
 
   errMsg = signal<string | undefined>(undefined);
+
   private owner$ = toObservable(this.owner);
   private body$ = toObservable(this.body);
   private status$ = toObservable(this.status);
@@ -78,6 +79,7 @@ export class TodoListComponent {
         })
       )
     );
+
   filteredTodos = computed(() => {
     const serverFilteredTodos = this.serverFilteredTodos();
     return this.todoService.filterTodos(serverFilteredTodos, {
