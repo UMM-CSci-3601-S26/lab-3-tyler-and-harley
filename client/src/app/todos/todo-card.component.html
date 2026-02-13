@@ -14,7 +14,10 @@
             We had to put both the `status` and `category` entries on a single line. Otherwise
             we got an annoying leading space in front of the values.
             -->
-            <p matListItemLine class="todo-card-status">{{ todo().status }}</p>
+            <p matListItemLine class="todo-card-status"> @if (todo().status) {
+              complete }
+             @else{ incomplete }
+            </p>
           </mat-list-item>
           <mat-divider [inset]=true></mat-divider>
           <mat-list-item>
@@ -28,9 +31,9 @@
     }
     @if (simple()) {
       <mat-card-actions>
-        <button mat-button data-test="viewProfileButton" [routerLink]="['/todos', todo()._id]">View Profile</button>
-        @if (status ) {<mat-icon matListItemIcon>check</mat-icon>
-        }@else{<mat-icon matListItemIcon>dataset</mat-icon>}
+        <button mat-button data-test="viewInformationButton" [routerLink]="['/todos', todo()._id]">View Information</button>
+        @if ( todo().status  ) {<mat-icon matListItemIcon>check</mat-icon>
+        }@else{<mat-icon matListItemIcon>close</mat-icon>}
       </mat-card-actions>
     }
   </mat-card>
