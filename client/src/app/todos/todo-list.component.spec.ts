@@ -59,6 +59,13 @@ describe('Todo list', () => {
     expect(spy).toHaveBeenCalledWith({ owner: 'Disney', body: undefined, status: undefined });
   });
 
+  it('should call getTodos() when status signal changes', () => {
+    const spy = spyOn(todoService, 'getTodos').and.callThrough();
+    todoList.status.set('incomplete');
+    fixture.detectChanges();
+    expect(spy).toHaveBeenCalledWith({ owner: undefined, body: undefined, status: 'incomplete' });
+  });
+
   it('should not show error message on successful load', () => {
     expect(todoList.errMsg()).toBeUndefined();
   });
