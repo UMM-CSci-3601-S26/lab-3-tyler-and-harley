@@ -52,8 +52,8 @@ export class TodoListComponent {
   viewType = signal<'card' | 'list'>('card');
 
   errMsg = signal<string | undefined>(undefined);
-  private owner$ = toObservable(this.status);
-  private body$ = toObservable(this.category);
+  private owner$ = toObservable(this.owner);
+  private body$ = toObservable(this.body);
 
   serverFilteredTodos =
     toSignal(

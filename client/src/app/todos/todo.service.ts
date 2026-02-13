@@ -36,6 +36,7 @@ export class TodoService {
     return this.httpClient.get<Todo>(`${this.todoUrl}/${id}`);
   }
 
+  // Everything gets mad when we comment this out, so our first implementation included this portion of filtering code :/
   filterTodos(todos: Todo[], filters: { owner?: string; body?: string }): Todo[] { // skipcq: JS-0105
     let filteredUsers = todos;
 
