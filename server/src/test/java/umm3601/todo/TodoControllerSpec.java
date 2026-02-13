@@ -2,14 +2,18 @@ package umm3601.todo;
 
 // import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 // import static org.junit.jupiter.api.Assertions.assertNotEquals;
 // import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 // import static org.junit.jupiter.api.Assertions.assertTrue;
 // import static org.junit.jupiter.api.Assertions.assertFalse;
 // import static org.junit.jupiter.api.Assertions.assertNotNull;
 // import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 // import static org.mockito.ArgumentMatchers.anyString;
 // import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -20,6 +24,7 @@ import java.io.IOException;
 // import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 // import java.util.Collections;
 // import java.util.Collections;
 // import java.util.HashMap;
@@ -215,4 +220,116 @@ void canGetAllTodos() throws IOException {
     todoArrayListCaptor.getValue().size());
   // checking if the database has the same number of todos as the captured list
 }
+@Test
+  void canGetCompleteTodoStatus() throws IOException {
+
+  String completeStatus = "complete";
+  String completeStatusString = completeStatus.toString(); //this variable was unneeded lol
+
+    Map<String, List<String>> queryParams = new HashMap<>();
+
+    queryParams.put("status", Arrays.asList(new String[] {completeStatusString}));
+  // When the code being tested calls `ctx.queryParamMap()` return the
+  // the `queryParams` map we just built.
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+
+  // When the code being tested calls `ctx.queryParam("status")` return the
+  // `completeStatusString`.
+    when(ctx.queryParam("status")).thenReturn(completeStatusString);
+
+  // Create a validator that confirms that when we ask for the value associated with
+  // You can actually put whatever you want here, because it's only used in the generation
+  // of testing error reports, but using the actually key value will make those reports more informative.
+  Validator<String> statusValidator = mock(Validator.class);
+  when(ctx.queryParamAsClass("status", String.class)).thenReturn(statusValidator);
+  when(statusValidator.check(any(), anyString())).thenReturn(statusValidator);
+  when(statusValidator.get()).thenReturn(completeStatus);
+
+  Validator<Integer> limitValidator = mock(Validator.class);
+  when(ctx.queryParamAsClass("limit", Integer.class)).thenReturn(limitValidator);
+  when(limitValidator.getOrDefault(0)).thenReturn(0);
+    // When the code being tested calls `ctx.queryParamAsClass("status", Integer.class)`
+    // we'll return the `Validator` we just constructed.
+
+    todoController.getTodos(ctx);
+
+    // Confirm that the code being tested calls `ctx.json(…)`, and capture whatever
+    // is passed in as the argument when `ctx.json()` is called.
+    verify(ctx).json(todoArrayListCaptor.capture());
+    // Confirm that the code under test calls `ctx.status(HttpStatus.OK)` is called.
+    verify(ctx).status(HttpStatus.OK);
+
+    // Confirm that we get back one todo.
+
+    assertEquals(1, todoArrayListCaptor.getValue().size());
+
+
+    // Confirm that todos have desired status: complete
+    for (Todo todo : todoArrayListCaptor.getValue()) {
+      assertTrue(todo.status);
+
+    }
+  }
+
+  @Test
+  void canGetInCompleteTodoStatus() throws IOException {
+
+  String incompleteStatus = "incomplete";
+
+    Map<String, List<String>> queryParams = new HashMap<>();
+
+    queryParams.put("status", Arrays.asList(new String[] {incompleteStatus}));
+
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    when(ctx.queryParam("status")).thenReturn(incompleteStatus);
+
+  Validator<String> statusValidator = mock(Validator.class);
+  when(ctx.queryParamAsClass("status", String.class)).thenReturn(statusValidator);
+  when(statusValidator.check(any(), anyString())).thenReturn(statusValidator);
+  when(statusValidator.get()).thenReturn(incompleteStatus);
+
+  Validator<Integer> limitValidator = mock(Validator.class);
+  when(ctx.queryParamAsClass("limit", Integer.class)).thenReturn(limitValidator);
+  when(limitValidator.getOrDefault(0)).thenReturn(0);
+
+    todoController.getTodos(ctx);
+
+    verify(ctx).json(todoArrayListCaptor.capture());
+    verify(ctx).status(HttpStatus.OK);
+
+    // Confirm that todos have desired status: incomplete
+    for (Todo todo : todoArrayListCaptor.getValue()) {
+      assertFalse(todo.status);
+    }
+  }
+
+  @Test
+  void canGetInvalidTodoStatus() throws IOException {
+
+  String invalidStatus = "complet";
+
+    Map<String, List<String>> queryParams = new HashMap<>();
+
+    queryParams.put("status", Arrays.asList(new String[] {invalidStatus}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    when(ctx.queryParam("status")).thenReturn(invalidStatus);
+
+  Validator<String> statusValidator = mock(Validator.class);
+  when(ctx.queryParamAsClass("status", String.class)).thenReturn(statusValidator);
+  when(statusValidator.check(any(), anyString())).thenReturn(statusValidator);
+  when(statusValidator.get()).thenReturn(invalidStatus);
+
+  Validator<Integer> limitValidator = mock(Validator.class);
+  when(ctx.queryParamAsClass("limit", Integer.class)).thenReturn(limitValidator);
+  when(limitValidator.getOrDefault(0)).thenReturn(0);
+    Exception thrown = assertThrows(IllegalArgumentException.class, () -> todoController.getTodos(ctx));
+
+    assertEquals("Unexpected status: complet", thrown.getMessage());
+
+    //We realize we missed this bit of coverage from the last lab and wanted to
+    //test how the server would act if given an invalid input for its contents
+
+    }
+
+
 }

@@ -1,21 +1,30 @@
 package umm3601.todo;
 
-// import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+// import static com.mongodb.client.model.Filters.regex;
 
+// import java.nio.charset.StandardCharsets;
+// import java.security.MessageDigest;
+// import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-// import java.util.List;
-// import java.util.Set;
+import java.util.List;
+// import java.util.Map;
+// import java.util.Objects;
+// import java.util.regex.Pattern;
+import java.util.Set;
 
-// import org.bson.Document;
+import org.bson.Document;
 import org.bson.UuidRepresentation;
-// import org.bson.conversions.Bson;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.mongojack.JacksonMongoCollection;
 
 import com.mongodb.client.MongoDatabase;
-// import com.mongodb.client.model.Filters;
 // import com.mongodb.client.model.Sorts;
+// import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
@@ -31,6 +40,8 @@ public class TodoController implements Controller {
 
   private static final String API_TODOS = "/api/todos";
   private static final String API_TODO_BY_ID = "/api/todos/{id}";
+
+  private static final String STATUS_REGEX = "^(complete|incomplete)$";
 
   // private static final String STATUS_REGEX = "^(complete|incomplete)$";
   // private static final String BODY_REGEX = ".*";
@@ -81,6 +92,7 @@ public class TodoController implements Controller {
    * @param ctx a Javalin HTTP context
    */
   public void getTodos(Context ctx) {
+    Bson combinedFilter = constructFilter(ctx);
 
     int limit = ctx.queryParamAsClass("limit", Integer.class)
       .getOrDefault(0);
@@ -88,7 +100,7 @@ public class TodoController implements Controller {
     //The default todo limit is '0' which means that there is no limit and all todos are displayed.
 
     ArrayList<Todo> matchingTodos = todoCollection
-      .find()
+      .find(combinedFilter)
       .limit(limit)
       .into(new ArrayList<>());
 
@@ -100,6 +112,31 @@ public class TodoController implements Controller {
     // Explicitly set the context status to OK
     ctx.status(HttpStatus.OK);
  }
+
+ private Bson constructFilter(Context ctx) {
+    List<Bson> filters = new ArrayList<>(); // start with an empty list of filters
+
+
+    if (ctx.queryParamMap().containsKey("status")) {
+      String status = ctx.queryParamAsClass("status", String.class)
+        .check(it -> it.matches(STATUS_REGEX), "User must have a legal status")
+        .get();
+
+        Boolean boolStatus = switch (status) {
+          case "complete" -> true;            //if status is "complete," then the boolean value returned is true
+          case "incomplete" -> false;         //if the status is "incomplete," then the value returned is false
+          default -> throw new IllegalArgumentException("Unexpected status: " + status);
+        };  //in the case that the status is neither "compete" nor "incomplete,"
+            // then and exception is thrown that stops execution
+            // -Evie (I forgot to reference this early on, but I did have help from AI(Copilot) coming up
+            //  with this portion of code)
+
+     filters.add(eq("status", boolStatus));
+    }
+    Bson combinedFilter = filters.isEmpty() ? new Document() : and(filters);
+
+    return combinedFilter;
+  }
 
   @Override
   public void addRoutes(Javalin server) {
