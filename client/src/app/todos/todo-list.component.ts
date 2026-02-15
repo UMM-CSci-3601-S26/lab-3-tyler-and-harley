@@ -13,7 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { catchError, combineLatest, of, switchMap, tap } from 'rxjs';
-import { Todo, status } from './todo';
+import { Todo, TodoStatus } from './todo';
 import { TodoCardComponent } from './todo-card.component';
 import { TodoService } from './todo.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
@@ -46,7 +46,7 @@ export class TodoListComponent {
 
   owner = signal<string | undefined>(undefined);
   category = signal<string | undefined>(undefined);
-  status = signal<status | undefined>(undefined);
+  status = signal<TodoStatus | undefined>(undefined);
   body = signal<string | undefined>(undefined);
 
   errMsg = signal<string | undefined>(undefined);

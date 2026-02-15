@@ -1,4 +1,4 @@
-// import { status } from 'src/app/todos/todo';
+import { TodoStatus } from 'src/app/todos/todo';
 
 export class TodoListPage {
   private readonly baseUrl = '/todos';
@@ -7,7 +7,7 @@ export class TodoListPage {
   private readonly todoListItemsSelector = '.todo-nav-list .todo-list-item';
   private readonly informationButtonSelector = '[data-test=viewInformationButton]';
   private readonly radioButtonSelector = '[data-test=viewTypeRadio] mat-radio-button';
-  private readonly todoRoleDropdownSelector = '[data-test=todoRoleSelect]';
+  private readonly todoStatusDropdownSelector = '[data-test=todoStatusSelect]';
   private readonly dropdownOptionSelector = 'mat-option';
   private readonly addTodoButtonSelector = '[data-test=addTodoButton]';
 

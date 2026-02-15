@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 //import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { Todo, status } from './todo';
+import { Todo, TodoStatus } from './todo';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,8 @@ export class TodoService {
   private readonly ownerKey = 'owner';
   private readonly bodyKey = 'body';
 
-  getTodos(filters?: { body?: string; owner?: string; status?: status;}) {
+  // server side filtering
+  getTodos(filters?: { body?: string; owner?: string; status?: TodoStatus;}) {
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
       if (filters.status) {
