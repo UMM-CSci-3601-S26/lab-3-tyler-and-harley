@@ -1,6 +1,5 @@
 <div class="flex-row">
   <div class="flex-1">
-
     <mat-card class="search-card">
       <mat-card-header>
         <mat-card-title class="todo-list-title">Todos</mat-card-title>
@@ -11,10 +10,10 @@
 
         <mat-form-field class="input-field">
             <mat-label>Status</mat-label>
-            <mat-select [(ngModel)]="status" data-test="statusSelect">
+            <mat-select [(ngModel)]="status" data-test="todoStatusSelect">
               <mat-option>--</mat-option>
-              <mat-option value="complete">complete</mat-option>
-              <mat-option value="incomplete">incomplete</mat-option>
+              <mat-option value="complete">Complete</mat-option>
+              <mat-option value="incomplete">Incomplete</mat-option>
             </mat-select>
             <mat-hint>Filtered on server</mat-hint>
         </mat-form-field>
@@ -27,7 +26,6 @@
   <div class="flex-row">
   @if (serverFilteredTodos()) {
   <div class="flex-1">
-    <!-- Switch between card and list view based on the viewType variable, set above in the mar-radio-group -->
     <div>
       <div class="todo-cards-container flex-row gap-8 flex-wrap">
         @for (todo of filteredTodos(); track todo._id) {
@@ -39,7 +37,7 @@
   } @else {
           <div class="flex-1" class="user-error">
             <mat-error>
-            There was a problem loading the users. Possibly the server is down or perhaps there are network
+            There was a problem loading the todos. Possibly the server is down or perhaps there are network
             issues.
             </mat-error>
             <mat-error>

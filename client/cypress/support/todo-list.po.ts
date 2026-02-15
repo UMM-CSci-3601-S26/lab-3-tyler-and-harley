@@ -54,14 +54,14 @@ export class TodoListPage {
   }
 
   /**
-   * Change the view of todos.
-   *
-   * @param viewType Which view type to change to: "card" or "list".
-   */
-
-  /**
-   * Selects a role to filter in the "Status" selector.
-   *
-   * @param value The status *value* to select, this is what's found in the mat-option "value" attribute.
-   */
+     * Selects a status to filter in the "Status" selector.
+     *
+     * @param value The status *value* to select, this is what's found in the mat-option "value" attribute.
+     */
+  selectStatus(value: TodoStatus) {
+    // Find and click the drop down
+    cy.get(this.todoStatusDropdownSelector).click();
+    // Select and click the desired value from the resulting menu
+    return cy.get(`${this.dropdownOptionSelector}[value="${value}"]`).click();
+  }
 }
