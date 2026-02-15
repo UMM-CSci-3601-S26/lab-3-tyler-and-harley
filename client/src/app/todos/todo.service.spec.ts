@@ -128,7 +128,7 @@ describe('TodoService', () => {
     * about the returned value).
     */
 
-      it('correctly calls api/users with filter parameter \'complete\'', () => {
+      it('correctly calls api/todos with filter parameter \'complete\'', () => {
         const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
 
         todoService.getTodos({ status: 'complete' }).subscribe(() => {
@@ -139,27 +139,6 @@ describe('TodoService', () => {
             .withContext('talks to the correct endpoint')
             .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('status', 'complete') });
         });
-      });
-    });
-  });
-  describe('Filtering on the client using `filterTodos()` (Angular/Client filtering)', () => {
-    /*
-     * Since `filterUsers` actually filters "locally" (in
-     * Angular instead of on the server), we do want to
-     * confirm that everything it returns has the desired
-     * properties. Since this doesn't make a call to the server,
-     * though, we don't have to use the mock HttpClient and
-     * all those complications.
-     */
-    it('filters by status', () => {
-      const status = 'incomplete';
-      const filteredTodos = todoService.filterTodos(testTodos, { status: status });
-      // There should be two users with an 'i' in their
-      // name: Chris and Jamie.
-      expect(filteredTodos.length).toBe(1);
-      // Every returned user's name should contain an 'i'.
-      filteredTodos.forEach(todo => {
-        expect(todo.status.indexOf(status)).toBeGreaterThanOrEqual(0);
       });
     });
   });

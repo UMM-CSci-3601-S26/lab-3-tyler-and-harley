@@ -40,14 +40,9 @@ export class TodoService {
     return this.httpClient.get<Todo>(`${this.todoUrl}/${id}`);
   }
 
-  // Everything gets mad when we comment this out, so our first implementation included this portion of filtering code :/
-  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; status?: status; }): Todo[] {
+  //client side filtering
+  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; status?: TodoStatus; }): Todo[] {
     let filteredTodos = todos;
-
-    // Filter by status
-    if (filters.status) {
-      filteredTodos = filteredTodos.filter(todo => todo.status.indexOf(filters.status) !== -1);
-    }
 
     // Filter by owner
     if (filters.owner) {
