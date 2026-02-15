@@ -1,4 +1,4 @@
-// import { status } from 'src/app/todos/todo';
+import { TodoStatus } from 'src/app/todos/todo';
 
 export class TodoListPage {
   private readonly baseUrl = '/todos';
@@ -7,7 +7,7 @@ export class TodoListPage {
   private readonly todoListItemsSelector = '.todo-nav-list .todo-list-item';
   private readonly informationButtonSelector = '[data-test=viewInformationButton]';
   private readonly radioButtonSelector = '[data-test=viewTypeRadio] mat-radio-button';
-  private readonly todoRoleDropdownSelector = '[data-test=todoRoleSelect]';
+  private readonly todoStatusDropdownSelector = '[data-test=todoStatusSelect]';
   private readonly dropdownOptionSelector = 'mat-option';
   private readonly addTodoButtonSelector = '[data-test=addTodoButton]';
 
@@ -54,14 +54,14 @@ export class TodoListPage {
   }
 
   /**
-   * Change the view of todos.
-   *
-   * @param viewType Which view type to change to: "card" or "list".
-   */
-
-  /**
-   * Selects a role to filter in the "Status" selector.
-   *
-   * @param value The status *value* to select, this is what's found in the mat-option "value" attribute.
-   */
+     * Selects a status to filter in the "Status" selector.
+     *
+     * @param value The status *value* to select, this is what's found in the mat-option "value" attribute.
+     */
+  selectStatus(value: TodoStatus) {
+    // Find and click the drop down
+    cy.get(this.todoStatusDropdownSelector).click();
+    // Select and click the desired value from the resulting menu
+    return cy.get(`${this.dropdownOptionSelector}[value="${value}"]`).click();
+  }
 }
