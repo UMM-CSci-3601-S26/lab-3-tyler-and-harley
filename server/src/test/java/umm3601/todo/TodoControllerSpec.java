@@ -1,9 +1,9 @@
 package umm3601.todo;
 
-// import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-// import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 // import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,6 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 // import static org.mockito.ArgumentMatchers.anyString;
 // import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -61,13 +62,13 @@ import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.json.JavalinJackson;
-// import io.javalin.validation.BodyValidator;
+import io.javalin.validation.BodyValidator;
 // import io.javalin.validation.Validation;
 // import io.javalin.validation.ValidationError;
 // import io.javalin.validation.ValidationException;
 import io.javalin.validation.Validator;
 // import io.javalin.validation.Validation;
-// import umm3601.user.UserController;
+// import umm3601.todo.TodoController;
 
 
 public class TodoControllerSpec {
@@ -329,6 +330,48 @@ void canGetAllTodos() throws IOException {
     //test how the server would act if given an invalid input for its contents
 
     }
+
+  @Test
+  void addTodo() throws IOException {
+    // Create a new todo to add
+    Todo newTodo = new Todo();
+    newTodo.owner = "Test Todo";
+    newTodo.category = "Test category";
+    newTodo.body = "testers";
+    newTodo.status = true;
+
+    String newTodoJson = javalinJackson.toJsonString(newTodo, Todo.class);
+
+    // A `BodyValidator` needs
+    //   - The string (`newTodoJson`) being validated
+    //   - The class (`Todo.class) it's trying to generate from that string
+    //   - A function (`() -> Todo`) which "shows" the validator how to convert
+    //     the JSON string to a `Todo` object. We'll again use `javalinJackson`,
+    //     but in the other direction.
+    when(ctx.bodyValidator(Todo.class))
+      .thenReturn(new BodyValidator<Todo>(newTodoJson, Todo.class,
+                    () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    todoController.addNewTodo(ctx);
+    verify(ctx).json(mapCaptor.capture());
+
+    // Our status should be 201, i.e., our new todo was successfully created.
+    verify(ctx).status(HttpStatus.CREATED);
+
+    // Verify that the todo was added to the database with the correct ID
+    Document addedTodo = db.getCollection("todos")
+        .find(eq("_id", new ObjectId(mapCaptor.getValue().get("id")))).first();
+
+    // Successfully adding the todo should return the newly generated, non-empty
+    // MongoDB ID for that todo.
+    assertNotEquals("", addedTodo.get("_id"));
+    // The new todo in the database (`addedTodo`) should have the same
+    // field values as the todo we asked it to add (`newTodo`).
+    assertEquals(newTodo.owner, addedTodo.get("owner"));
+    assertEquals(newTodo.category, addedTodo.get("category"));
+    assertEquals(newTodo.body, addedTodo.get("body"));
+    assertEquals(newTodo.status, addedTodo.get("status"));
+  }
 
 
 }

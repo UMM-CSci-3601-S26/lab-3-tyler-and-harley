@@ -9,7 +9,7 @@ import static com.mongodb.client.model.Filters.eq;
 // import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-// import java.util.Map;
+import java.util.Map;
 // import java.util.Objects;
 // import java.util.regex.Pattern;
 // import java.util.Set;
@@ -42,6 +42,7 @@ public class TodoController implements Controller {
   private static final String API_TODO_BY_ID = "/api/todos/{id}";
 
   private static final String STATUS_REGEX = "^(complete|incomplete)$";
+  private static final String STATUS_KEY = "^(true|false)$";
 
   // private static final String STATUS_REGEX = "^(complete|incomplete)$";
   // private static final String BODY_REGEX = ".*";
@@ -138,12 +139,49 @@ public class TodoController implements Controller {
     return combinedFilter;
   }
 
+     public void addNewTodo(Context ctx) {
+    /*
+     * The follow chain of statements uses the Javalin validator system
+     * to verify that instance of `User` provided in this context is
+     * a "legal" user. It checks the following things (in order):
+     *    - The user has a value for the name (`usr.name != null`)
+     *    - The user name is not blank (`usr.name.length > 0`)
+     *    - The provided email is valid (matches EMAIL_REGEX)
+     *    - The provided age is > 0
+     *    - The provided age is < REASONABLE_AGE_LIMIT
+     *    - The provided role is valid (one of "admin", "editor", or "viewer")
+     *    - A non-blank company is provided
+     * If any of these checks fail, the Javalin system will throw a
+     * `BadRequestResponse` with an appropriate error message.
+     */
+    String body = ctx.body();
+    Todo newTodo = ctx.bodyValidator(Todo.class)
+      .check(todo -> todo.owner != null && todo.owner.length() > 0,
+        "Todo must have a non-empty todo name; body was " + body)
+      .check(todo -> todo.status.toString().matches(STATUS_KEY),
+        "Todo must have a legal todo status; body was " + body)
+      .check(todo -> todo.body != null && todo.body.length() > 0,
+        "Todo must have a non-empty body; body was " + body)
+      .check(todo -> todo.category != null && todo.category.length() > 0,
+        "Todo must have a non-empty todo category; body was " + body)
+      .get();
+
+    // Add the new todo to the database
+    todoCollection.insertOne(newTodo);
+
+    ctx.json(Map.of("id", newTodo._id));
+
+    ctx.status(HttpStatus.CREATED);
+  }
+
   @Override
   public void addRoutes(Javalin server) {
     // List users, filtered using query parameters
     server.get(API_TODOS, this::getTodos);
 
     server.get(API_TODO_BY_ID, this::getTodo);
+
+    server.post(API_TODOS, this::addNewTodo);
 
     //no specific endpoint needed for queries
 
