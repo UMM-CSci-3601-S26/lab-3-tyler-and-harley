@@ -3,7 +3,7 @@ export interface Todo {
   owner: string;
   body: string;
   category: string;
-  status: status;
+  status: TodoStatus;
 }
 
-export type status = 'incomplete' | 'complete';
+export type TodoStatus = 'incomplete' | 'complete';

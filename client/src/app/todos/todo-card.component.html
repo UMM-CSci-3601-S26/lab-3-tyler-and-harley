@@ -32,8 +32,8 @@
     @if (simple()) {
       <mat-card-actions>
         <button mat-button data-test="viewInformationButton" [routerLink]="['/todos', todo()._id]">View Information</button>
-        @if ( todo().status  ) {<mat-icon matListItemIcon>check</mat-icon>
-        }@else{<mat-icon matListItemIcon>close</mat-icon>}
+        @if ( todo().status  ) {<mat-icon matListItemIcon data-test="completeIcon">check</mat-icon>
+        }@else{<mat-icon matListItemIcon data-test="incompleteIcon">close</mat-icon>}
       </mat-card-actions>
     }
   </mat-card>

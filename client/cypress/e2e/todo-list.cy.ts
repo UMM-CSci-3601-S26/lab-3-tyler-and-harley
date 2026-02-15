@@ -33,4 +33,17 @@ describe('Todo list', () => {
     });
   });
 
+  it('Should select a status and check that it returned correct cards', () => {
+    // Filter for status 'incomplete');
+    page.selectStatus('incomplete');
+
+    // Some of the todos should be listed
+    page.getTodoCards().should('have.lengthOf.above', 0);
+
+    // All of the todo list items that show should have the status icon we are looking for
+    page.getTodoCards().each(($card) => {
+      cy.wrap($card).find('[data-test="incompleteIcon"]').should('exist');
+    });
+  });
+
 });

@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
-import { Todo, status } from './todo';
+import { Todo, TodoStatus } from './todo';
 import { toObservable } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-todo-card',
@@ -14,7 +14,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 })
 export class TodoCardComponent {
 
-  status = signal<status | undefined>(undefined);
+  status = signal<TodoStatus | undefined>(undefined);
   private status$ = toObservable(this.status);
 
   todo = input.required<Todo>();

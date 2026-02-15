@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 //import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { Todo } from './todo';
+import { Todo, TodoStatus } from './todo';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +17,13 @@ export class TodoService {
   private readonly ownerKey = 'owner';
   private readonly bodyKey = 'body';
 
-  getTodos(filters?: { body?: string; owner?: string }) {
+  // server side filtering
+  getTodos(filters?: { body?: string; owner?: string; status?: TodoStatus;}) {
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
+      if (filters.status) {
+        httpParams = httpParams.set(this.statusKey, filters.status);
+      }
       if (filters.body) {
         httpParams = httpParams.set(this.bodyKey, filters.body.toString());
       }
@@ -36,22 +40,22 @@ export class TodoService {
     return this.httpClient.get<Todo>(`${this.todoUrl}/${id}`);
   }
 
-  // Everything gets mad when we comment this out, so our first implementation included this portion of filtering code :/
-  filterTodos(todos: Todo[], filters: { owner?: string; body?: string }): Todo[] { // skipcq: JS-0105
-    let filteredUsers = todos;
+  //client side filtering
+  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; status?: TodoStatus; }): Todo[] {
+    let filteredTodos = todos;
 
     // Filter by owner
     if (filters.owner) {
       filters.owner = filters.owner.toLowerCase();
-      filteredUsers = filteredUsers.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
+      filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
     }
 
     // Filter by body
     if (filters.body) {
       filters.body = filters.body.toLowerCase();
-      filteredUsers = filteredUsers.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
+      filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
     }
 
-    return filteredUsers;
+    return filteredTodos;
   }
 }
