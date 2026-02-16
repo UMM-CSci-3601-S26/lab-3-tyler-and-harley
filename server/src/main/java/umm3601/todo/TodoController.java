@@ -157,11 +157,11 @@ public class TodoController implements Controller {
     String body = ctx.body();
     Todo newTodo = ctx.bodyValidator(Todo.class)
       .check(todo -> todo.owner != null && todo.owner.length() > 0,
-        "Todo must have a non-empty todo name; body was " + body)
+        "Todo must have a non-empty todo owner; body was " + body)
       .check(todo -> todo.status.toString().matches(STATUS_KEY),
         "Todo must have a legal todo status; body was " + body)
       .check(todo -> todo.body != null && todo.body.length() > 0,
-        "Todo must have a non-empty body; body was " + body)
+        "Todo must have a non-empty todo body; body was " + body)
       .check(todo -> todo.category != null && todo.category.length() > 0,
         "Todo must have a non-empty todo category; body was " + body)
       .get();

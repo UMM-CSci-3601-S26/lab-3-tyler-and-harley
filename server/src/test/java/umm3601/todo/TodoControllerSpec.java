@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 // import static org.mockito.ArgumentMatchers.anyString;
 // import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
+// import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,9 +63,9 @@ import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.json.JavalinJackson;
 import io.javalin.validation.BodyValidator;
+import io.javalin.validation.ValidationError;
+import io.javalin.validation.ValidationException;
 // import io.javalin.validation.Validation;
-// import io.javalin.validation.ValidationError;
-// import io.javalin.validation.ValidationException;
 import io.javalin.validation.Validator;
 // import io.javalin.validation.Validation;
 // import umm3601.todo.TodoController;
@@ -373,5 +373,111 @@ void canGetAllTodos() throws IOException {
     assertEquals(newTodo.status, addedTodo.get("status"));
   }
 
+  @Test
+  void addEmptyAttributesTodo() throws IOException {
+    String newTodoJson = """
+        {
+          "owner": "",
+          "status": true,
+          "body": "",
+          "category": ""
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    // This should now throw a `ValidationException`
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+    // This `ValidationException` was caused by a custom check, so we just get the message from the first
+    // error (which is a `"REQUEST_BODY"` error) and convert that to a string with `toString()`. This gives
+    // a `String` that has all the details of the exception, which we can make sure contains information
+    // that would help a developer sort out validation errors.
+    List<ValidationError<Object>> errors = exception.getErrors().get("REQUEST_BODY");
+
+    // The message should be the message from our code under test, which should also include some text
+    // indicating that there was an empty string for the todo owner.
+    String ownerExceptionMessage = errors.get(0).toString();
+    assertTrue(ownerExceptionMessage.contains("non-empty todo owner"));
+
+    // The message should be the message from our code under test, which should also include some text
+    // indicating that there was an empty string for the todo body.
+    String bodyExceptionMessage = errors.get(1).toString();
+    assertTrue(bodyExceptionMessage.contains("non-empty todo body"));
+
+
+    String categoryExceptionMessage = errors.get(2).toString();
+    assertTrue(categoryExceptionMessage.contains("non-empty todo category"));
+  }
+
+@Test
+void addNullOwnerAndCategoryTodo() throws IOException {
+  String newTodoJson = """
+        {
+          "status": true,
+          "body": "bees"
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    // This should now throw a `ValidationException`
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+    // This `ValidationException` was caused by a custom check, so we just get the message from the first
+    // error (which is a `"REQUEST_BODY"` error) and convert that to a string with `toString()`. This gives
+    // a `String` that has all the details of the exception, which we can make sure contains information
+    // that would help a developer sort out validation errors.
+    List<ValidationError<Object>> errors = exception.getErrors().get("REQUEST_BODY");
+
+    // The message should be the message from our code under test, which should also include some text
+    // indicating that there was an empty string for the todo owner.
+    String ownerExceptionMessage = errors.get(0).toString();
+    assertTrue(ownerExceptionMessage.contains("non-empty todo owner"));
+
+    // The message should be the message from our code under test, which should also include some text
+    // indicating that there was an empty string for the todo category.
+    String categoryExceptionMessage = errors.get(1).toString();
+    assertTrue(categoryExceptionMessage.contains("non-empty todo category"));
+  }
+
+@Test
+void addNullBodyTodo() throws IOException {
+  String newTodoJson = """
+        {
+          "owner": "guy",
+          "status": true,
+          "category": "beans"
+        }
+        """;
+
+    when(ctx.body()).thenReturn(newTodoJson);
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(newTodoJson, Todo.class,
+                        () -> javalinJackson.fromJsonString(newTodoJson, Todo.class)));
+
+    // This should now throw a `ValidationException`
+    ValidationException exception = assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+    // This `ValidationException` was caused by a custom check, so we just get the message from the first
+    // error (which is a `"REQUEST_BODY"` error) and convert that to a string with `toString()`. This gives
+    // a `String` that has all the details of the exception, which we can make sure contains information
+    // that would help a developer sort out validation errors.
+    List<ValidationError<Object>> errors = exception.getErrors().get("REQUEST_BODY");
+
+    // The message should be the message from our code under test, which should also include some text
+    // indicating that there was an empty string for the todo body.
+    String bodyExceptionMessage = errors.get(0).toString();
+    assertTrue(bodyExceptionMessage.contains("non-empty todo body"));
+  }
 
 }
