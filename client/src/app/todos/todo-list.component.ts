@@ -85,7 +85,6 @@ export class TodoListComponent {
     return this.todoService.filterTodos(serverFilteredTodos, {
       owner: this.owner(),
       body: this.body(),
-      status: this.status()
     });
   });
 }

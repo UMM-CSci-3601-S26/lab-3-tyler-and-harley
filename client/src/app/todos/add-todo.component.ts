@@ -45,7 +45,7 @@ export class AddTodoComponent {
     // without any particular validation.
     body: new FormControl(''),
 
-    statustatus: new FormControl<TodoStatus>('incomplete', Validators.compose([
+    status: new FormControl<TodoStatus>('incomplete', Validators.compose([
       Validators.required,
       Validators.pattern('^(complete|incomplete)$'),
     ])),

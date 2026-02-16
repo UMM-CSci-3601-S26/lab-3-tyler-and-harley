@@ -41,7 +41,7 @@ export class TodoService {
   }
 
   //client side filtering
-  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; status?: TodoStatus; }): Todo[] {
+  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; }): Todo[] {
     let filteredTodos = todos;
 
     // Filter by owner
