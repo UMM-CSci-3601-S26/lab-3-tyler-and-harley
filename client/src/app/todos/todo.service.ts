@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-//import { map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Todo, TodoStatus } from './todo';
 
@@ -41,7 +41,7 @@ export class TodoService {
   }
 
   //client side filtering
-  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; status?: TodoStatus; }): Todo[] {
+  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; }): Todo[] {
     let filteredTodos = todos;
 
     // Filter by owner
@@ -57,5 +57,9 @@ export class TodoService {
     }
 
     return filteredTodos;
+  }
+
+  addTodo(newTodo: Partial<Todo>): Observable<string> {
+    return this.httpClient.post<{id: string}>(this.todoUrl, newTodo).pipe(map(response => response.id));
   }
 }

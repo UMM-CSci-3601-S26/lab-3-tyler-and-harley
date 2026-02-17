@@ -58,21 +58,15 @@ describe('TodoService', () => {
 
   describe('When getTodos() is called with no parameters', () => {
     it('calls `api/todos`', waitForAsync(() => {
-      // Mock the `httpClient.get()` method, so that instead of making an HTTP request,
-      // it just returns our test data.
+
       const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
 
-      // Call `todoService.getTodos()` and confirm that the correct call has
-      // been made with the correct arguments.
+
       todoService.getTodos().subscribe(() => {
-        // The mocked method (`httpClient.get()`) should have been called
-        // exactly one time.
+
         expect(mockedMethod)
           .withContext('one call')
           .toHaveBeenCalledTimes(1);
-        // The mocked method should have been called with two arguments:
-        //   * the appropriate URL ('/api/users' defined in the `TodoService`)
-        //   * An options object containing an empty `HttpParams`
         expect(mockedMethod)
           .withContext('talks to the correct endpoint')
           .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams() });
@@ -96,8 +90,7 @@ describe('TodoService', () => {
       // been made with the correct arguments.
 
       todoService.getTodoById(targetId).subscribe(() => {
-        // The `User` returned by `getUserById()` should be targetUser, but
-        // we don't bother with an `expect` here since we don't care what was returned.
+
         expect(mockedMethod)
           .withContext('one call')
           .toHaveBeenCalledTimes(1);
@@ -106,40 +99,46 @@ describe('TodoService', () => {
           .toHaveBeenCalledWith(`${todoService.todoUrl}/${targetId}`);
       });
     }));
+  });
 
-    describe('When getUsers() is called with parameters, it correctly forms the HTTP request (Javalin/Server filtering)', () => {
-    /*
-    * As in the test of `getUsers()` that takes in no filters in the params,
-    * we really don't care what `getUsers()` returns in the cases
-    * where the filtering is happening on the server. Since all the
-    * filtering is happening on the server, `getUsers()` is really
-    * just a "pass through" that returns whatever it receives, without
-    * any "post processing" or manipulation. So the tests in this
-    * `describe` block all confirm that the HTTP request is properly formed
-    * and sent out in the world, but don't _really_ care about
-    * what `getUsers()` returns as long as it's what the HTTP
-    * request returns.
-    *
-    * So in each of these tests, we'll keep it simple and have
-    * the (mocked) HTTP request return the entire list `testUsers`
-    * even though in "real life" we would expect the server to
-    * return return a filtered subset of the users. Furthermore, we
-    * won't actually check what got returned (there won't be an `expect`
-    * about the returned value).
-    */
+  describe('When getTodos() is called with parameters, it correctly forms the HTTP request (Javalin/Server filtering)', () => {
 
-      it('correctly calls api/todos with filter parameter \'complete\'', () => {
-        const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
 
-        todoService.getTodos({ status: 'complete' }).subscribe(() => {
-          expect(mockedMethod)
-            .withContext('one call')
-            .toHaveBeenCalledTimes(1);
-          expect(mockedMethod)
-            .withContext('talks to the correct endpoint')
-            .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('status', 'complete') });
-        });
+    it('correctly calls api/todos with filter parameter \'complete\'', () => {
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
+
+      todoService.getTodos({ status: 'complete' }).subscribe(() => {
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('status', 'complete') });
       });
     });
   });
-})
+
+  describe('Adding a todo using `addTodo()`', () => {
+    it('talks to the right endpoint and is called once', waitForAsync(() => {
+      const todo_id = 'pat_id';
+      const expected_http_response = { id: todo_id } ;
+
+      // Mock the `httpClient.addTodo()` method, so that instead of making an HTTP request,
+      // it just returns our expected HTTP response.
+      const mockedMethod = spyOn(httpClient, 'post')
+        .and
+        .returnValue(of(expected_http_response));
+
+      todoService.addTodo(testTodos[1]).subscribe((new_todo_id) => {
+        expect(new_todo_id).toBe(todo_id);
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(todoService.todoUrl, testTodos[1]);
+      });
+    }));
+  });
+});
+
