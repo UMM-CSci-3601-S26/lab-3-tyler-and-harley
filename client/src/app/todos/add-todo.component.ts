@@ -32,23 +32,16 @@ export class AddTodoComponent {
       // very long names. This demonstrates that it's possible, though,
       // to have maximum length limits.
       Validators.maxLength(50),
-      (fc) => {
-        if (fc.value.toLowerCase() === 'abc123' || fc.value.toLowerCase() === '123abc') {
-          return ({existingOwner: true});
-        } else {
-          return null;
-        }
-      },
     ])),
-
-    // We don't care much about what is in the company field, so we just add it here as part of the form
-    // without any particular validation.
-    body: new FormControl(''),
 
     status: new FormControl<TodoStatus>('incomplete', Validators.compose([
       Validators.required,
-      Validators.pattern('^(complete|incomplete)$'),
+      Validators.pattern('^(true|false)$'),
     ])),
+
+    body: new FormControl(''),
+
+    category: new FormControl(''),
   });
 
 
@@ -58,14 +51,22 @@ export class AddTodoComponent {
     owner: [
       {type: 'required', message: 'Owner is required'},
       {type: 'minlength', message: 'Owner must be at least 2 characters long'},
-      {type: 'maxlength', message: 'Owner cannot be more than 50 characters long'},
-      {type: 'existingName', message: 'Owner has already been taken'}
+      {type: 'maxlength', message: 'Owner cannot be more than 50 characters long'}
     ],
 
     status: [
       { type: 'required', message: 'status is required' },
       { type: 'pattern', message: 'status must be complete or incomplete' },
     ]
+
+    // body: [
+    //   { type: 'required', message: 'Body is required' },
+    //   { type: 'minlength', message: 'Body must be at least 2 characters long'}
+    // ],
+
+    // category: [
+    //   { type: 'required', message: 'Category is required'}
+    // ]
   };
 
   formControlHasError(controlOwner: string): boolean {

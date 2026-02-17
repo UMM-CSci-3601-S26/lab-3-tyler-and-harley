@@ -60,8 +60,6 @@ export class TodoService {
   }
 
   addTodo(newTodo: Partial<Todo>): Observable<string> {
-    // Send post request to add a new user with the user data as the body.
-    // `res.id` should be the MongoDB ID of the newly added `User`.
     return this.httpClient.post<{id: string}>(this.todoUrl, newTodo).pipe(map(response => response.id));
   }
 }
