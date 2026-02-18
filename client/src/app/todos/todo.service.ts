@@ -16,16 +16,14 @@ export class TodoService {
   private readonly statusKey = 'status';
   private readonly ownerKey = 'owner';
   private readonly bodyKey = 'body';
+  private readonly categoryKey = 'category';
 
   // server side filtering
-  getTodos(filters?: { body?: string; owner?: string; status?: TodoStatus;}) {
+  getTodos(filters?: {owner?: string; body?: string; status?: TodoStatus;}) {
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
       if (filters.status) {
         httpParams = httpParams.set(this.statusKey, filters.status);
-      }
-      if (filters.owner) {
-        httpParams = httpParams.set(this.ownerKey, filters.owner);
       }
     }
     return this.httpClient.get<Todo[]>(this.todoUrl, {
@@ -38,13 +36,18 @@ export class TodoService {
   }
 
   //client side filtering
-  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; }): Todo[] {
+  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; category?: string; }): Todo[] {
     let filteredTodos = todos;
 
     // Filter by owner
     if (filters.owner) {
       filters.owner = filters.owner.toLowerCase();
       filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
+    }
+    // Filter by category
+    if (filters.category) {
+      filters.category = filters.category.toLowerCase();
+      filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
     }
 
     // Filter by body

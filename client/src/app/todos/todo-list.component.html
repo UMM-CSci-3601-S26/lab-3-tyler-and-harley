@@ -7,9 +7,22 @@
       <mat-card-content>
 
       <div class="flex-row gap-8 flex-wrap">
+
+          <mat-form-field class="input-field">
+            <mat-label>Owner</mat-label>
+            <input matInput data-test="todoOwnerInput" placeholder="Filter by owner" [(ngModel)]="owner">
+            <mat-hint>Filtered on client</mat-hint>
+          </mat-form-field>
+
           <mat-form-field class="input-field">
             <mat-label>Body</mat-label>
             <input matInput data-test="todoBodyInput" placeholder="Filter by body" [(ngModel)]="body">
+            <mat-hint>Filtered on client</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Category</mat-label>
+            <input matInput data-test="todoCategoryInput" placeholder="Filter by category" [(ngModel)]="category">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
 

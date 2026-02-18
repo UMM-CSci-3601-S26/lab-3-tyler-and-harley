@@ -45,6 +45,32 @@ describe('Todo list', () => {
     );
   });
 
+  it('Should type something in the category filter and check that it returned correct elements', () => {
+
+    cy.get('[data-test=todoCategoryInput]').type('homework');
+
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-category').should('have.text', 'homework');
+    });
+
+    page.getTodoCards().find('.todo-card-category').each(el =>
+      expect(el.text()).to.equal('homework')
+    );
+  });
+
+  it('Should type something in the owner filter and check that it returned correct elements', () => {
+
+    cy.get('[data-test=todoOwnerInput]').type('Blanche');
+
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-owner').should('have.text', 'Blanche');
+    });
+
+    page.getTodoCards().find('.todo-card-owner').each(el =>
+      expect(el.text()).to.equal('Blanche')
+    );
+  });
+
   it('Should select a status and check that it returned correct cards', () => {
     // Filter for status 'incomplete');
     page.selectStatus('incomplete');
@@ -57,5 +83,4 @@ describe('Todo list', () => {
       cy.wrap($card).find('[data-test="incompleteIcon"]').should('exist');
     });
   });
-
 });
