@@ -140,5 +140,19 @@ describe('TodoService', () => {
       });
     }));
   });
+  describe('Filtering on the client using `filterTodos()` (Angular/Client filtering)', () => {
+
+    it('filters by body', () => {
+      const todoBody = 'reptile';
+      const filteredTodos = todoService.filterTodos(testTodos, { body: todoBody });
+      // There should be two todos with an 'i' in their
+      // name: Chris and Jamie.
+      expect(filteredTodos.length).toBe(1);
+      // Every returned todo's name should contain an 'i'.
+      filteredTodos.forEach(todo => {
+        expect(todo.body.indexOf(todoBody)).toBeGreaterThanOrEqual(0);
+      });
+    });
+  });
 });
 
