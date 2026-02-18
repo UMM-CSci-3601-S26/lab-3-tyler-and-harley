@@ -24,13 +24,25 @@ describe('Todo list', () => {
       // When the view profile button on the first todo card is clicked, the URL should have a valid mongo ID
       page.clickViewInformation(page.getTodoCards().first());
 
-      // The URL should be '/users/' followed by a mongo ID
+      // The URL should be '/todos/' followed by a mongo ID
       cy.url().should('match', /\/todos\/[0-9a-fA-F]{24}$/);
 
-      // On this profile page we were sent to, the name and company should be correct
       cy.get('.todo-card-owner').first().should('have.text', firstTodoOwner);
       cy.get('.todo-card-body').first().should('have.text', firstTodoBody);
     });
+  });
+
+  it('Should type something in the body filter and check that it returned correct elements', () => {
+
+    cy.get('[data-test=todoBodyInput]').type('Lorem');
+
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-body').should('contain.text', 'Lorem');
+    });
+
+    page.getTodoCards().find('.todo-card-body').each(el =>
+      expect(el.text()).to.contain('Lorem')
+    );
   });
 
   it('Should select a status and check that it returned correct cards', () => {
