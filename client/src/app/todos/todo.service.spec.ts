@@ -161,12 +161,24 @@ describe('TodoService', () => {
     });
     it('filters by owner', () => {
       const todoOwner = 'pat';
-      const filteredTodos = todoService.filterTodos(testTodos, { body: todoOwner });
+      const filteredTodos = todoService.filterTodos(testTodos, { owner: todoOwner });
       expect(filteredTodos.length).toBe(1);
       filteredTodos.forEach(todo => {
         expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
       });
     });
+
+    it('filters by owner and body', () => {
+      const todoOwner = 'kermit';
+      const todoBody = 'something interesting about kermit';
+
+      const filteredTodos = todoService.filterTodos(testTodos, { owner: todoOwner, body: todoBody });
+      expect(filteredTodos.length).toBe(1);
+      filteredTodos.forEach(todo => {
+        expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
+        expect(todo.body.indexOf(todoBody)).toBeGreaterThanOrEqual(0);
+      });
+    });
+
   });
 });
-

@@ -79,4 +79,24 @@ describe('Todo list', () => {
       cy.wrap($card).find('[data-test="incompleteIcon"]').should('exist');
     });
   });
+
+  it('Should type something in the owner and body filter and check that it returned correct elements', () => {
+
+    cy.get('[data-test=todoBodyInput]').type('Lorem');
+    cy.get('[data-test=todoOwnerInput]').type('Blanche');
+
+    page.getTodoCards().each(e => {
+      cy.wrap(e).find('.todo-card-body').should('contain.text', 'Lorem');
+      page.getTodoCards().find('.todo-card-owner')
+        .should('contain.text', 'Blanche')
+    });
+
+    page.getTodoCards().find('.todo-card-body').each(el =>
+      expect(el.text()).to.contain('Lorem')
+    );
+    page.getTodoCards().find('.todo-card-owner').each(el =>
+      expect(el.text()).to.equal('Blanche')
+
+    );
+  });
 });
