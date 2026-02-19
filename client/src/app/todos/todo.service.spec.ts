@@ -145,14 +145,40 @@ describe('TodoService', () => {
     it('filters by body', () => {
       const todoBody = 'reptile';
       const filteredTodos = todoService.filterTodos(testTodos, { body: todoBody });
-      // There should be two todos with an 'i' in their
-      // name: Chris and Jamie.
       expect(filteredTodos.length).toBe(1);
-      // Every returned todo's name should contain an 'i'.
       filteredTodos.forEach(todo => {
         expect(todo.body.indexOf(todoBody)).toBeGreaterThanOrEqual(0);
       });
     });
+
+    it('filters by category', () => {
+      const todoCategory = 'frog';
+      const filteredTodos = todoService.filterTodos(testTodos, { category: todoCategory });
+      expect(filteredTodos.length).toBe(1);
+      filteredTodos.forEach(todo => {
+        expect(todo.category.indexOf(todoCategory)).toBeGreaterThanOrEqual(0);
+      });
+    });
+    it('filters by owner', () => {
+      const todoOwner = 'pat';
+      const filteredTodos = todoService.filterTodos(testTodos, { owner: todoOwner });
+      expect(filteredTodos.length).toBe(1);
+      filteredTodos.forEach(todo => {
+        expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
+      });
+    });
+
+    it('filters by owner and body', () => {
+      const todoOwner = 'kermit';
+      const todoBody = 'something interesting about kermit';
+
+      const filteredTodos = todoService.filterTodos(testTodos, { owner: todoOwner, body: todoBody });
+      expect(filteredTodos.length).toBe(1);
+      filteredTodos.forEach(todo => {
+        expect(todo.owner.indexOf(todoOwner)).toBeGreaterThanOrEqual(0);
+        expect(todo.body.indexOf(todoBody)).toBeGreaterThanOrEqual(0);
+      });
+    });
+
   });
 });
-
