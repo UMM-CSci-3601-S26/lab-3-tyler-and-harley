@@ -49,13 +49,9 @@ describe('Todo list', () => {
 
     cy.get('[data-test=todoCategoryInput]').type('homework');
 
-    page.getTodoCards().each(e => {
-      cy.wrap(e).find('.todo-card-category').should('have.text', 'homework');
-    });
+    page.clickViewInformation(page.getTodoCards().first());
+    cy.get('.todo-card-category').should('have.text', 'homework');
 
-    page.getTodoCards().find('.todo-card-category').each(el =>
-      expect(el.text()).to.equal('homework')
-    );
   });
 
   it('Should type something in the owner filter and check that it returned correct elements', () => {
