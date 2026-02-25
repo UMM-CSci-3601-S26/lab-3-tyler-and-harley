@@ -18,13 +18,17 @@ export class TodoService {
   private readonly bodyKey = 'body';
   private readonly categoryKey = 'category';
   private readonly limitKey = 'limit'
+  private readonly orderByKey = 'orderBy'
 
   // server side filtering
-  getTodos(filters?: {owner?: string; body?: string; status?: TodoStatus; limit?: number}) {
+  getTodos(filters?: {owner?: string; body?: string; status?: TodoStatus; limit?: number; orderBy?: string}) {
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
       if (filters.status) {
         httpParams = httpParams.set(this.statusKey, filters.status);
+      }
+      if (filters.orderBy) {
+        httpParams = httpParams.set(this.orderByKey, filters.orderBy);
       }
     }
     return this.httpClient.get<Todo[]>(this.todoUrl, {
@@ -58,8 +62,10 @@ export class TodoService {
     }
 
     // Filter by limit
-    if (filters.limit !== undefined) {
+    if (filters.limit) {
       filteredTodos = filteredTodos.slice(0, filters.limit);
+    } else {
+      filteredTodos = filteredTodos.slice(0, 1000);
     }
 
     return filteredTodos;

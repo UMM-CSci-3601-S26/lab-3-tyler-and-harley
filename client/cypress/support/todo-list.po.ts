@@ -8,6 +8,7 @@ export class TodoListPage {
   private readonly informationButtonSelector = '[data-test=viewInformationButton]';
   private readonly radioButtonSelector = '[data-test=viewTypeRadio] mat-radio-button';
   private readonly todoStatusDropdownSelector = '[data-test=todoStatusSelect]';
+  private readonly todoOrderByDropdownSelector = '[data-test=todoOrderBySelect]';
   private readonly dropdownOptionSelector = 'mat-option';
   private readonly addTodoButtonSelector = '[data-test=addTodoButton]';
 
@@ -61,6 +62,13 @@ export class TodoListPage {
   selectStatus(value: TodoStatus) {
     // Find and click the drop down
     cy.get(this.todoStatusDropdownSelector).click();
+    // Select and click the desired value from the resulting menu
+    return cy.get(`${this.dropdownOptionSelector}[value="${value}"]`).click();
+  }
+
+  selectOrderBy(value: string) {
+    // Find and click the drop down
+    cy.get(this.todoOrderByDropdownSelector).click();
     // Select and click the desired value from the resulting menu
     return cy.get(`${this.dropdownOptionSelector}[value="${value}"]`).click();
   }

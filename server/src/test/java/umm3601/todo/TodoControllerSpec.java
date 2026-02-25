@@ -332,6 +332,40 @@ void canGetAllTodos() throws IOException {
     }
 
   @Test
+  void testOrderBy() {
+    Validator<Integer> validator = mock(Validator.class);
+    when(ctx.queryParamAsClass("limit", Integer.class)).thenReturn(validator);
+
+    when(validator.getOrDefault(0)).thenReturn(0); //avoids null pointer for limit query that may or may not exist
+
+    when(ctx.queryParamMap()).thenReturn(Map.of("orderBy", List.of("owner")));
+    //making sure that when the map is filled, it will be ordered by owner
+
+    when(ctx.queryParam("orderBy")).thenReturn("owner");
+
+    todoController.getTodos(ctx);
+    //filling queryParamMap
+
+    verify(ctx).json(todoArrayListCaptor.capture());
+    //capturing the Array list to refer to later when we check it with database
+    verify(ctx).status(HttpStatus.OK);
+
+    List<String> returned = new ArrayList();
+    for (Todo todo : todoArrayListCaptor.getValue()) {
+      returned.add(todo.owner);
+    } // adding each owner to the list in alphabetical order so we know they're ordered correctly
+
+  List<String> expected = new ArrayList();
+  expected.add("Katie");
+  expected.add("Katy");
+  expected.add("Marty");
+  expected.add("Mike");
+  expected.add("Pam");
+
+  assertEquals(expected, returned);
+}
+
+  @Test
   void addTodo() throws IOException {
     // Create a new todo to add
     Todo newTodo = new Todo();

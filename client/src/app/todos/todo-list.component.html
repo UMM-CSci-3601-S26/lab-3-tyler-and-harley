@@ -42,6 +42,18 @@
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
 
+        <mat-form-field class="input-field">
+            <mat-label>OrderBy</mat-label>
+            <mat-select [(ngModel)]="orderBy" data-test="todoOrderBySelect">
+              <mat-option>--</mat-option>
+              <mat-option value="owner">Owner</mat-option>
+              <mat-option value="status">Status</mat-option>
+              <mat-option value="body">Body</mat-option>
+              <mat-option value="category">Category</mat-option>
+            </mat-select>
+            <mat-hint>Filtered on server</mat-hint>
+        </mat-form-field>
+
       </div>
       </mat-card-content>
     </mat-card>

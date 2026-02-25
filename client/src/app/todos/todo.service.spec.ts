@@ -116,6 +116,19 @@ describe('TodoService', () => {
           .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('status', 'complete') });
       });
     });
+
+    it('correctly calls api/todos with filter parameter \'Owner\'', () => {
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
+
+      todoService.getTodos({ orderBy: 'owner' }).subscribe(() => {
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('orderBy', 'owner') });
+      });
+    });
   });
 
   describe('Adding a todo using `addTodo()`', () => {
