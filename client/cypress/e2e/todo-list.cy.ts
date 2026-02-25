@@ -80,6 +80,13 @@ describe('Todo list', () => {
     });
   });
 
+  it('Should select a sorting order and check that the cards are ordered correctly', () => {
+    page.selectOrderBy('owner');
+    page.getTodoCards().should('have.lengthOf.above', 0);
+    cy.get('.todo-card-owner').first().should('have.text', 'Barry');
+    cy.get('.todo-card-owner').last().should('have.text', 'Workman');
+  });
+
   it('Should type something in the owner and body filter and check that it returned correct elements', () => {
 
     cy.get('[data-test=todoBodyInput]').type('Lorem');
@@ -115,5 +122,4 @@ describe('Todo list', () => {
     page.getTodoCards().should('not.have.length', 4);
 
   });
-
 });

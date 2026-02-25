@@ -48,23 +48,26 @@ export class TodoListComponent {
   category = signal<string | undefined>(undefined);
   status = signal<TodoStatus | undefined>(undefined);
   body = signal<string | undefined>(undefined);
-  limit = signal<number | undefined>(undefined)
+  limit = signal<number | undefined>(undefined);
+  orderBy = signal<string | undefined>(undefined)
   errMsg = signal<string | undefined>(undefined);
 
   private owner$ = toObservable(this.owner);
   private body$ = toObservable(this.body);
   private status$ = toObservable(this.status);
   private limit$ = toObservable(this.limit);
+  private orderBy$ = toObservable(this.orderBy);
 
   serverFilteredTodos =
     toSignal(
-      combineLatest([this.owner$, this.body$, this.status$, this.limit$]).pipe(
-        switchMap(([owner, body, status, limit]) =>
+      combineLatest([this.owner$, this.body$, this.status$, this.limit$, this.orderBy$]).pipe(
+        switchMap(([owner, body, status, limit, orderBy]) =>
           this.todoService.getTodos({
             owner,
             body,
             status,
-            limit
+            limit,
+            orderBy
           })
         ),
         catchError((err) => {
