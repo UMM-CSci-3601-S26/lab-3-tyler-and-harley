@@ -43,10 +43,6 @@ public class TodoController implements Controller {
 
   private static final String STATUS_REGEX = "^(complete|incomplete)$";
   private static final String STATUS_KEY = "^(true|false)$";
-
-  // private static final String STATUS_REGEX = "^(complete|incomplete)$";
-  // private static final String BODY_REGEX = ".*";
-
   private final JacksonMongoCollection<Todo> todoCollection;
 
   /**

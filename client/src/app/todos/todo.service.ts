@@ -17,9 +17,10 @@ export class TodoService {
   private readonly ownerKey = 'owner';
   private readonly bodyKey = 'body';
   private readonly categoryKey = 'category';
+  private readonly limitKey = 'limit'
 
   // server side filtering
-  getTodos(filters?: {owner?: string; body?: string; status?: TodoStatus;}) {
+  getTodos(filters?: {owner?: string; body?: string; status?: TodoStatus; limit?: number}) {
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
       if (filters.status) {
@@ -36,7 +37,7 @@ export class TodoService {
   }
 
   //client side filtering
-  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; category?: string; }): Todo[] {
+  filterTodos(todos: Todo[], filters: { owner?: string; body?: string; category?: string; limit?: number;}): Todo[] {
     let filteredTodos = todos;
 
     // Filter by owner
@@ -54,6 +55,11 @@ export class TodoService {
     if (filters.body) {
       filters.body = filters.body.toLowerCase();
       filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
+    }
+
+    // Filter by limit
+    if (filters.limit !== undefined) {
+      filteredTodos = filteredTodos.slice(0, filters.limit);
     }
 
     return filteredTodos;

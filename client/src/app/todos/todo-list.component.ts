@@ -1,4 +1,4 @@
-import { Component, computed, signal, inject, Pipe, PipeTransform } from '@angular/core';
+import { Component, computed, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -54,40 +54,41 @@ export class TodoListComponent {
   private owner$ = toObservable(this.owner);
   private body$ = toObservable(this.body);
   private status$ = toObservable(this.status);
+  private limit$ = toObservable(this.limit);
 
-  @Pipe({name: 'limitPipe'})
-
-    serverFilteredTodos =
-      toSignal(
-        combineLatest([this.owner$, this.body$, this.status$]).pipe(
-          switchMap(([owner, body, status]) =>
-            this.todoService.getTodos({
-              owner,
-              body,
-              status
-            })
-          ),
-          catchError((err) => {
-            if (!(err.error instanceof ErrorEvent)) {
-              this.errMsg.set(
-                `Problem contacting the server – Error Code: ${err.status}\nMessage: ${err.message}`
-              );
-            }
-            this.snackBar.open(this.errMsg(), 'OK', { duration: 6000 });
-
-            return of<Todo[]>([]);
-          }),
-          tap(() => {
+  serverFilteredTodos =
+    toSignal(
+      combineLatest([this.owner$, this.body$, this.status$, this.limit$]).pipe(
+        switchMap(([owner, body, status, limit]) =>
+          this.todoService.getTodos({
+            owner,
+            body,
+            status,
+            limit
           })
-        )
-      );
+        ),
+        catchError((err) => {
+          if (!(err.error instanceof ErrorEvent)) {
+            this.errMsg.set(
+              `Problem contacting the server – Error Code: ${err.status}\nMessage: ${err.message}`
+            );
+          }
+          this.snackBar.open(this.errMsg(), 'OK', { duration: 6000 });
+
+          return of<Todo[]>([]);
+        }),
+        tap(() => {
+        })
+      )
+    );
 
   filteredTodos = computed(() => {
     const serverFilteredTodos = this.serverFilteredTodos();
     return this.todoService.filterTodos(serverFilteredTodos, {
       owner: this.owner(),
       body: this.body(),
-      category: this.category()
+      category: this.category(),
+      limit: this.limit()
     });
   });
 }
