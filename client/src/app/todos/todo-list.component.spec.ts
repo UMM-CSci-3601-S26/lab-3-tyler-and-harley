@@ -49,21 +49,21 @@ describe('Todo list', () => {
     const spy = spyOn(todoService, 'getTodos').and.callThrough();
     todoList.body.set('Miska Mouska');
     fixture.detectChanges();
-    expect(spy).toHaveBeenCalledWith({ owner: undefined, body: 'Miska Mouska', status: undefined });
+    expect(spy).toHaveBeenCalledWith({ owner: undefined, body: 'Miska Mouska', status: undefined, limit: undefined });
   });
 
   it('should call getTodos() when owner signal changes', () => {
     const spy = spyOn(todoService, 'getTodos').and.callThrough();
     todoList.owner.set('Disney');
     fixture.detectChanges();
-    expect(spy).toHaveBeenCalledWith({ owner: 'Disney', body: undefined, status: undefined });
+    expect(spy).toHaveBeenCalledWith({ owner: 'Disney', body: undefined, status: undefined, limit: undefined });
   });
 
   it('should call getTodos() when status signal changes', () => {
     const spy = spyOn(todoService, 'getTodos').and.callThrough();
     todoList.status.set('incomplete');
     fixture.detectChanges();
-    expect(spy).toHaveBeenCalledWith({ owner: undefined, body: undefined, status: 'incomplete' });
+    expect(spy).toHaveBeenCalledWith({ owner: undefined, body: undefined, status: 'incomplete', limit: undefined });
   });
 
   it('should not show error message on successful load', () => {

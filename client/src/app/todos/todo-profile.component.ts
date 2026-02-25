@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, Signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { catchError, map, switchMap } from 'rxjs/operators';
@@ -6,6 +6,7 @@ import { TodoCardComponent } from './todo-card.component';
 import { TodoService } from './todo.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
+import { Todo } from './todo';
 
 @Component({
   selector: 'app-todo-profile',
@@ -17,7 +18,7 @@ export class TodoProfileComponent {
   private route = inject(ActivatedRoute);
   private todoService = inject(TodoService);
 
-  todo = toSignal(
+  todo: Signal<Todo> = toSignal(
     this.route.paramMap.pipe(
 
       map((paramMap: ParamMap) => paramMap.get('id')),

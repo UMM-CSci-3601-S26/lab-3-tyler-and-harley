@@ -99,4 +99,21 @@ describe('Todo list', () => {
 
     );
   });
+
+  it('Should type something in the limit filter and check that it returned correct elements', () => {
+
+    cy.get('[data-test=todoLimitInput]').type('5');
+
+    page.getTodoCards().should('have.length', 5);
+
+  });
+
+  it('Should type something in the limit filter and check that it returned the incorrect elements', () => {
+
+    cy.get('[data-test=todoLimitInput]').type('5');
+
+    page.getTodoCards().should('not.have.length', 4);
+
+  });
+
 });

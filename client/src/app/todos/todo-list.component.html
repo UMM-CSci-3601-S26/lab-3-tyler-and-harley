@@ -35,6 +35,13 @@
             </mat-select>
             <mat-hint>Filtered on server</mat-hint>
         </mat-form-field>
+
+        <mat-form-field class="input-field">
+            <mat-label>Limit</mat-label>
+            <input matInput data-test="todoLimitInput" placeholder="Limit number of todos" [(ngModel)]="limit">
+            <mat-hint>Filtered on client</mat-hint>
+          </mat-form-field>
+
       </div>
       </mat-card-content>
     </mat-card>

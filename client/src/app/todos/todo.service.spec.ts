@@ -180,5 +180,23 @@ describe('TodoService', () => {
       });
     });
 
+    it('limits number of todos', () => {
+      const todoLimit = 3;
+      const filteredTodos = todoService.filterTodos(testTodos, { limit: todoLimit });
+      expect(filteredTodos.length).toBe(3);
+    });
+
+    it('limits number of todos', () => {
+      const todoLimit = 2;
+      const filteredTodos = todoService.filterTodos(testTodos, { limit: todoLimit });
+      expect(filteredTodos.length).toBe(2);
+    });
+
+    it('limits number of todos', () => {
+      const todoLimit = 1;
+      const filteredTodos = todoService.filterTodos(testTodos, { limit: todoLimit });
+      expect(filteredTodos.length).toBe(1);
+    });
+
   });
 });
